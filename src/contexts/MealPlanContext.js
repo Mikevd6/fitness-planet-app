@@ -275,11 +275,11 @@ export const MealPlanProvider = ({ children }) => {
           
           // Get recipes for this meal type and calorie range
           const recipeResult = await edamamService.searchRecipes({
-            query: this.getMealTypeQuery(mealType),
+            query: getMealTypeQuery(mealType),
             mealType: mealType,
-            calories: ${mealTarget.min}-,
+            calories: `${mealTarget.min}-${mealTarget.max}`,
             diet: userProfile.dietPreferences?.[0] || '',
-            health: userProfile.allergens ? userProfile.allergens.map(a => ${a}-free).join(',') : '',
+            health: userProfile.allergens ? userProfile.allergens.map(a => `${a}-free`).join(',') : '',
             from: 0,
             to: 10
           });
@@ -290,7 +290,7 @@ export const MealPlanProvider = ({ children }) => {
             generatedMenu[day][mealType] = recipeResult.recipes[randomIndex];
           } else {
             // Use fallback/dummy recipe if API fails
-            generatedMenu[day][mealType] = this.getFallbackRecipe(mealType, mealTarget.target);
+            generatedMenu[day][mealType] = getFallbackRecipe(mealType, mealTarget.target);
           }
         }
       }
@@ -316,7 +316,7 @@ export const MealPlanProvider = ({ children }) => {
   };
 
   // Helper function to get search query for meal type
-  getMealTypeQuery = (mealType) => {
+  const getMealTypeQuery = (mealType) => {
     const queries = {
       breakfast: 'healthy breakfast',
       lunch: 'healthy lunch',
@@ -327,10 +327,10 @@ export const MealPlanProvider = ({ children }) => {
   };
 
   // Fallback recipe generator
-  getFallbackRecipe = (mealType, targetCalories) => {
+  const getFallbackRecipe = (mealType, targetCalories) => {
     const fallbackRecipes = {
       breakfast: {
-        id: allback-breakfast-,
+        id: "fallback-breakfast-recipe",
         title: 'Healthy Oatmeal Bowl',
         description: 'Nutritious oatmeal with fruits and nuts',
         calories: targetCalories,
@@ -339,7 +339,7 @@ export const MealPlanProvider = ({ children }) => {
         mealType: ['breakfast']
       },
       lunch: {
-        id: allback-lunch-,
+        id: "fallback-lunch-recipe",
         title: 'Garden Salad with Protein',
         description: 'Fresh salad with lean protein',
         calories: targetCalories,
@@ -348,7 +348,7 @@ export const MealPlanProvider = ({ children }) => {
         mealType: ['lunch']
       },
       dinner: {
-        id: allback-dinner-,
+        id: "fallback-dinner-recipe",
         title: 'Grilled Chicken with Vegetables',
         description: 'Balanced dinner with lean protein and vegetables',
         calories: targetCalories,
@@ -357,7 +357,7 @@ export const MealPlanProvider = ({ children }) => {
         mealType: ['dinner']
       },
       snack: {
-        id: allback-snack-,
+        id: "fallback-snack-recipe",
         title: 'Mixed Nuts and Fruit',
         description: 'Healthy snack with nuts and seasonal fruit',
         calories: targetCalories,
@@ -444,7 +444,7 @@ export const MealPlanProvider = ({ children }) => {
                 ingredients.set(ingredientName, {
                   name: ingredientName,
                   quantity: 1,
-                  category: this.categorizeIngredient(ingredientName),
+                  category: categorizeIngredient(ingredientName),
                   checked: false
                 });
               }
@@ -467,7 +467,7 @@ export const MealPlanProvider = ({ children }) => {
   };
 
   // Categorize ingredient for shopping list
-  categorizeIngredient = (ingredient) => {
+  const categorizeIngredient = (ingredient) => {
     const categories = {
       'Produce': ['tomato', 'onion', 'garlic', 'lettuce', 'spinach', 'carrot', 'bell pepper', 'cucumber', 'apple', 'banana', 'lemon', 'lime', 'avocado', 'broccoli', 'cauliflower'],
       'Meat & Seafood': ['chicken', 'beef', 'pork', 'fish', 'salmon', 'tuna', 'shrimp', 'turkey', 'ham', 'bacon'],
